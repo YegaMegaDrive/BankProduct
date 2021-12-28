@@ -1,5 +1,10 @@
 server:
-  port:
-    8180
+  port: 8081
 keycloak:
-
+  realm: mBank
+  resource: mBankAuthorization
+  bearer-only: true
+  auth-server-url: http://localhost:8080/auth
+spring:
+  main:
+    allow-circular-references: true
