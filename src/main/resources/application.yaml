@@ -1,3 +1,8 @@
+admin:
+  realm: master
+  username: grigolenok
+  password: 2661617Egor
+  resource: admin-cli
 server:
   port: 8081
 keycloak:
@@ -5,7 +10,7 @@ keycloak:
   resource: mBankAuthorization
   bearer-only: true
   credentials:
-     secret: M15X3Tlhi0lG4CSANBH2wRmnaZueo0AJ
+     secret: 0bxGNBoo1RXUx4mMZEo3emG2UqSJib7X
   auth-server-url: http://localhost:8080/auth
 spring:
   main:

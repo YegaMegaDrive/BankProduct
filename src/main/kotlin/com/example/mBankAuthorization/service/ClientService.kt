@@ -6,8 +6,8 @@ import javax.ws.rs.core.Response
 
 interface ClientService {
 
-    fun assignRole(userId: String, roleRepresentation: RoleRepresentation)
-    fun assignToGroup(userId: String, groupId: String)
-    fun createClient (request: User): Response
-
+    fun assignRole(username: String, roleRepresentation: RoleRepresentation)
+    fun assignToGroup(username: String, groupId: String)
+/*    fun createClient (request: User): Response*/
+    fun createDefaultClient(request: User): Response
 }

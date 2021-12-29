@@ -22,15 +22,16 @@ import javax.annotation.PostConstruct
 @KeycloakConfiguration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
-    @Value("\${keycloak.credentials.secret}")
-    private val secretKey: String,
-    @Value("\${keycloak.resource}")
-    private val clientId: String,
     @Value("\${keycloak.auth-server-url}")
     private val authUrl: String,
-    @Value("\${keycloak.realm}")
-    private val realm: String
-
+    @Value("\${admin.username}")
+    private val adminUsername: String,
+    @Value("\${admin.password}")
+    private val adminPassword: String,
+    @Value("\${admin.realm}")
+    private val adminRealm: String,
+    @Value("\${admin.resource}")
+    private val adminClientId: String
 ) : KeycloakWebSecurityConfigurerAdapter() {
 
     /*@PostConstruct
@@ -60,20 +61,25 @@ class SecurityConfig(
     override fun configure(http: HttpSecurity) {
         super.configure(http)
         http
+            .csrf().disable()
             .authorizeRequests()
-            .antMatchers("/api/*").permitAll()
+            .antMatchers("/api/register").permitAll()
             .anyRequest()
             .fullyAuthenticated()
+            .and()
+            .httpBasic().disable()
     }
 
     @Bean
     fun keycloak(): Keycloak {
         return KeycloakBuilder.builder()
-            .grantType(CLIENT_CREDENTIALS)
+            //.grantType(CLIENT_CREDENTIALS)
             .serverUrl(authUrl)
-            .realm(realm)
-            .clientId(clientId)
-            .clientSecret(secretKey)
+            .realm(adminRealm)
+            .clientId(adminClientId)
+           // .clientSecret(secretKey)
+            .username(adminUsername)
+            .password(adminPassword)
             .build()
     }
 

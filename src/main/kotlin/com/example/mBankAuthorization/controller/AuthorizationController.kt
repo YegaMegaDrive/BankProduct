@@ -9,13 +9,18 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.security.Principal
+import javax.ws.rs.core.Response
+import kotlin.jvm.Throws
 
 @RestController
 @RequestMapping("/api")
 class AuthorizationController(
    @Autowired
-   private val authService : ClientService
+   private val authService : ClientService,
+
 ) {
+
+    private lateinit var response: Response
 
     @GetMapping("/auth")
     fun getAccessToken(): String?{
@@ -31,7 +36,13 @@ class AuthorizationController(
 
     @PostMapping("/register")
     fun register(@RequestBody user: User):ResponseEntity<URI>{
-        val response = authService.createClient(user)
+
+        try {
+          response = authService.createClient(user)
+        }catch (e: Exception){
+            println(e.localizedMessage)
+        }
+
         if (response.status != 201)
             throw RuntimeException("Client was not created")
         return ResponseEntity.created(response.location).build()
