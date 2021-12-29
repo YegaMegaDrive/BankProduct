@@ -4,6 +4,8 @@ keycloak:
   realm: mBank
   resource: mBankAuthorization
   bearer-only: true
+  credentials:
+     secret: M15X3Tlhi0lG4CSANBH2wRmnaZueo0AJ
   auth-server-url: http://localhost:8080/auth
 spring:
   main:
