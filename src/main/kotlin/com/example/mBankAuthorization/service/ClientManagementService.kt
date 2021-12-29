@@ -4,10 +4,8 @@ import com.example.mBankAuthorization.dto.User
 import org.keycloak.representations.idm.RoleRepresentation
 import javax.ws.rs.core.Response
 
-interface ClientService {
-
-    fun assignRole(username: String, roleRepresentation: RoleRepresentation)
+interface ClientManagementService {
+    fun createClient(request: User): Response
     fun assignToGroup(username: String, groupId: String)
-/*    fun createClient (request: User): Response*/
-    fun createDefaultClient(request: User):Response
+    fun assignRole(username: String, roleRepresentation: RoleRepresentation)
 }
