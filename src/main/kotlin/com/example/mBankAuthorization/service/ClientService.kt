@@ -9,5 +9,5 @@ interface ClientService {
     fun assignRole(username: String, roleRepresentation: RoleRepresentation)
     fun assignToGroup(username: String, groupId: String)
 /*    fun createClient (request: User): Response*/
-    fun createDefaultClient(request: User): Response
+    fun createDefaultClient(request: User):Response
 }

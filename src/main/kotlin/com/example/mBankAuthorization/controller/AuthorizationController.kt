@@ -15,37 +15,33 @@ import kotlin.jvm.Throws
 @RestController
 @RequestMapping("/api")
 class AuthorizationController(
-   @Autowired
-   private val authService : ClientService,
+        @Autowired
+        private val authService: ClientService,
 
-) {
+        ) {
 
-    private lateinit var response: Response
+    private var response: Response? = null
 
     @GetMapping("/auth")
-    fun getAccessToken(): String?{
+    fun getAccessToken(): String? {
         val principal = SecurityContextHolder.getContext().authentication.principal
-        if(principal is KeycloakPrincipal<*>){
+        if (principal is KeycloakPrincipal<*>) {
             return principal.name + " keycloak principal"
         }
-        if(principal is Principal){
+        if (principal is Principal) {
             return principal.name + " spring principal"
         }
         return "no"
     }
 
     @PostMapping("/register")
-    fun register(@RequestBody user: User):ResponseEntity<URI>{
+    fun register(@RequestBody user: User): ResponseEntity<URI> {
 
-        try {
-          response = authService.createClient(user)
-        }catch (e: Exception){
-            println(e.localizedMessage)
-        }
+        response = authService.createDefaultClient(user)
 
-        if (response.status != 201)
+        if (response?.status != 201)
             throw RuntimeException("Client was not created")
-        return ResponseEntity.created(response.location).build()
+        return ResponseEntity.created(response!!.location).build()
     }
 
 }

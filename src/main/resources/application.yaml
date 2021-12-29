@@ -10,7 +10,8 @@ keycloak:
   resource: mBankAuthorization
   bearer-only: true
   credentials:
-     secret: 0bxGNBoo1RXUx4mMZEo3emG2UqSJib7X
+    secret: 7ML2OYtwAoxZ1xu9ePCKQZBKIx5Higf5
+  use-resource-role-mappings: true
   auth-server-url: http://localhost:8080/auth
 spring:
   main:
