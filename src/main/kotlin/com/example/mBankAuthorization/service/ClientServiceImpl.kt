@@ -12,42 +12,58 @@ import javax.ws.rs.core.Response
 
 @Service
 class ClientServiceImpl(
-    @Value("\${keycloak.realm}")
-    private val realm: String,
-    @Autowired
-    val keycloak: Keycloak
-): ClientService{
+        @Value("\${keycloak.realm}")
+        private val realm: String,
+        @Autowired
+        val keycloak: Keycloak
+) : ClientService {
 
     // Only for Admin
-    override fun assignToGroup(userId: String, groupId: String) {
+    override fun assignToGroup(username: String, groupId: String) {
         keycloak
-            .realm(realm)
-            .users()
-            .get(userId)
-            .joinGroup(groupId)
+                .realm(realm)
+                .users()
+                .get(getUserIdByUsername(username))
+                .joinGroup(groupId)
     }
 
     // Only for Admin
-    override fun assignRole(userId: String, roleRepresentation: RoleRepresentation) {
+    override fun assignRole(username: String, roleRepresentation: RoleRepresentation) {
+
         keycloak
-            .realm(realm)
-            .users()
-            .get(userId)
-            .roles()
-            .realmLevel()
-            .add(listOf(roleRepresentation))
+                .realm(realm)
+                .users()
+                .get(getUserIdByUsername(username))
+                .roles()
+                .realmLevel()
+                .add(listOf(roleRepresentation))
     }
 
-    override fun createClient (request: User): Response {
+    // Only for Admin
+    override fun createDefaultClient(request: User): Response{
+        val password = preparePasswordRepresentation(request.password)
+        val user = prepareUserRepresentation(request, password)
+
+        //Todo add default user initialization
+
+        return keycloak
+                .realm(realm)
+                .users()
+                .create(user)
+    }
+
+    // Only for Admin
+    /*override fun createClient(request: User): Response {
         val password = preparePasswordRepresentation(request.password)
         val user = prepareUserRepresentation(request, password)
         return keycloak
-            .realm(realm)
-            .users()
-            .create(user)
-    }
+                .realm(realm)
+                .users()
+                .create(user)
+    }*/
+
     private fun preparePasswordRepresentation(
-        password: String
+            password: String
     ): CredentialRepresentation {
         val cR = CredentialRepresentation()
         cR.isTemporary = false
@@ -55,9 +71,10 @@ class ClientServiceImpl(
         cR.value = password
         return cR
     }
+
     private fun prepareUserRepresentation(
-        request: User,
-        cR: CredentialRepresentation
+            request: User,
+            cR: CredentialRepresentation
     ): UserRepresentation {
         val newUser = UserRepresentation()
         newUser.username = request.username
@@ -66,5 +83,13 @@ class ClientServiceImpl(
         return newUser
     }
 
+    private fun getUserIdByUsername(username: String): String {
+        return keycloak
+                .realm(realm)
+                .users()
+                .search(username)
+                .first()
+                .id
+    }
 
 }
