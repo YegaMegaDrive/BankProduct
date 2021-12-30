@@ -61,11 +61,12 @@ class SecurityConfig(
     override fun configure(http: HttpSecurity) {
         super.configure(http)
         http
-            .csrf().disable()
+            .cors().and().csrf().disable()
             .authorizeRequests()
             .antMatchers("/api/register").permitAll()
+            .antMatchers("/api/authorize").permitAll()
             .anyRequest()
-            .fullyAuthenticated()
+            .authenticated()
             .and()
             .httpBasic().disable()
     }

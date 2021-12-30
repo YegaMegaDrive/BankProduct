@@ -16,11 +16,11 @@ fun preparePasswordRepresentation(
 
 fun prepareUserRepresentation(
         request: User,
-        cR: CredentialRepresentation
+        //cR: CredentialRepresentation
 ): UserRepresentation {
     val newUser = UserRepresentation()
     newUser.username = request.username
-    newUser.credentials = listOf(cR)
+    //newUser.credentials = listOf(cR)
     newUser.isEnabled = true
     newUser.email = request.email
     newUser.firstName = request.firstname
