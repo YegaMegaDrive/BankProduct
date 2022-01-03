@@ -1,20 +1,16 @@
 package com.example.mBankAuthorization.service
 
+import com.example.mBankAuthorization.dto.TokenRs
 import com.example.mBankAuthorization.dto.User
 import com.example.mBankAuthorization.util.preparePasswordRepresentation
 import com.example.mBankAuthorization.util.prepareUserRepresentation
 import org.keycloak.OAuth2Constants
 import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
-import org.keycloak.authorization.client.AuthzClient
-import org.keycloak.authorization.client.Configuration
-import org.keycloak.exceptions.TokenNotActiveException
-import org.keycloak.representations.AccessTokenResponse
-import org.keycloak.representations.idm.CredentialRepresentation
-import org.keycloak.representations.idm.RoleRepresentation
-import org.keycloak.representations.idm.UserRepresentation
+import org.keycloak.admin.client.KeycloakBuilder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -32,8 +28,12 @@ class AuthorizationServiceImpl(
         private val clientId: String,
         @Value("\${keycloak.auth-server-url}")
         private val authURL: String,
+        @Qualifier("keycloakAdmin")
         @Autowired
-        val keycloak: Keycloak
+        val keycloakAdmin: Keycloak,
+        @Qualifier("keycloakUser")
+        @Autowired
+        var keycloakUser: Keycloak
 ) : AuthorizationService {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
@@ -44,7 +44,7 @@ class AuthorizationServiceImpl(
 
         val user = prepareUserRepresentation(request/*, password*/)
 
-        val response = keycloak
+        val response = keycloakAdmin
                 .realm(realm)
                 .users()
                 .create(user)
@@ -53,7 +53,7 @@ class AuthorizationServiceImpl(
 
         log.info("Created userId {}", userId)
 
-        val realmResource = keycloak.realm(realm);
+        val realmResource = keycloakAdmin.realm(realm);
         val userResource = realmResource
                 .users()
                 .get(userId)
@@ -80,21 +80,38 @@ class AuthorizationServiceImpl(
         return response
     }
 
-    override fun signIn(user: User): AccessTokenResponse {
+    override fun signIn(user: User): TokenRs {
 
         val clientCredentials: MutableMap<String, Any> = HashMap()
         clientCredentials["secret"] = secret
-        clientCredentials["grant_type"] = OAuth2Constants.PASSWORD
+        clientCredentials[OAuth2Constants.GRANT_TYPE] = OAuth2Constants.PASSWORD
 
-        val configuration = Configuration(authURL, realm, clientId, clientCredentials, null)
+        /*val configuration = Configuration(authURL, realm, clientId, clientCredentials, null)
         val authClient: AuthzClient = AuthzClient.create(configuration)
 
-        val response = authClient.obtainAccessToken(user.username, user.password)
+        val response = authClient.obtainAccessToken(user.username, user.password)*/
+        keycloakUser = KeycloakBuilder
+            .builder()
+            .grantType(OAuth2Constants.PASSWORD)
+            .serverUrl(authURL)
+            .realm(realm)
+            .clientId(clientId)
+            .clientSecret(secret)
+            .username(user.username)
+            .password(user.password)
+            .build()
+
+        val response = keycloakUser.tokenManager().accessToken
 
         if(response.error != null && response.error != ""){
             log.error("Error caused by {} trying to get keycloak token ",response.error)
             throw NoContentException(response.errorDescription)
         }
-        return response
+        return TokenRs(response)
+    }
+
+    override fun refreshToken(): TokenRs {
+       val response = keycloakUser.tokenManager().refreshToken()
+        return TokenRs(response)
     }
 }

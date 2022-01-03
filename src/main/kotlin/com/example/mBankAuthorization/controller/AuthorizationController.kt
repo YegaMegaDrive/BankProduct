@@ -1,18 +1,13 @@
 package com.example.mBankAuthorization.controller
 
+import com.example.mBankAuthorization.dto.TokenRs
 import com.example.mBankAuthorization.dto.User
 import com.example.mBankAuthorization.service.AuthorizationService
-import org.keycloak.OAuth2Constants
 import org.keycloak.admin.client.Keycloak
-import org.keycloak.authorization.client.AuthzClient
-import org.keycloak.representations.AccessTokenResponse
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.core.NoContentException
-import javax.ws.rs.core.Response
 
 
 @RestController
@@ -20,8 +15,9 @@ import javax.ws.rs.core.Response
 class AuthorizationController(
         @Autowired
         private val authService: AuthorizationService,
-        @Autowired
-        private val keycloak: Keycloak
+        /*@Autowired
+        @Qualifier("keycloakAdmin")
+        private val keycloak: Keycloak*/
         ) {
 
   /*  @GetMapping("/auth")
@@ -42,9 +38,9 @@ class AuthorizationController(
        val response = authService.registerClient(user)
     }
 
-    @PostMapping("/authorize")
+    @PostMapping("/signIn")
     @ResponseStatus(HttpStatus.FOUND)
-    fun signIn(@RequestBody user: User): AccessTokenResponse {
+    fun signIn(@RequestBody user: User): TokenRs {
 /*
         val principal = (request.userPrincipal as KeycloakAuthenticationToken)
                 .principal
@@ -60,10 +56,10 @@ class AuthorizationController(
         return authService.signIn(user)
     }
 
-    @GetMapping("/test")
+    @GetMapping("/refresh/token")
     @ResponseStatus(HttpStatus.OK)
-    fun test(): String{
-        return "all works"
+    fun refreshToken():TokenRs {
+        return authService.refreshToken()
     }
 
 }
