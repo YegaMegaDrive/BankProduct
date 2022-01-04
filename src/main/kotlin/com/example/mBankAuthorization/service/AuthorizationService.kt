@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response
 
 interface AuthorizationService {
 
-    fun registerClient(request: User):Response
+    fun registerClient(user: User):Response
     fun signIn(user: User): TokenRs
-    fun refreshToken(): TokenRs
+    fun refreshToken(user: User): TokenRs
 }

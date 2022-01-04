@@ -9,6 +9,7 @@ keycloak:
   realm: mBank
   resource: mBankAuthorization
   bearer-only: true
+  ssl-required: external
   credentials:
     secret: 7ML2OYtwAoxZ1xu9ePCKQZBKIx5Higf5
   use-resource-role-mappings: true

@@ -12,7 +12,10 @@ import org.keycloak.admin.client.KeycloakBuilder
 import org.keycloak.admin.client.token.TokenManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Scope
+import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -74,7 +77,7 @@ class SecurityConfig(
             .authorizeRequests()
             .antMatchers("/api/register").permitAll()
             .antMatchers("/api/signIn").permitAll()
-            .antMatchers("api/refresh/token").permitAll()
+            //.antMatchers("api/refresh/token").permitAll()
             .anyRequest()
             .authenticated()
             .and()
@@ -108,7 +111,7 @@ class SecurityConfig(
             .build()
     }
 
-    @Bean("keycloakUser")
+  /*  @Bean("keycloakUser")
     fun keycloakUser(): Keycloak {
         return KeycloakBuilder.builder()
             //.grantType(CLIENT_CREDENTIALS)
@@ -119,6 +122,6 @@ class SecurityConfig(
             .username(adminUsername)
             .password(adminPassword)
             .build()
-    }
+    }*/
 
 }

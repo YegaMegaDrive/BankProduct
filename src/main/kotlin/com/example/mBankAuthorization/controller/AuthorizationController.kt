@@ -35,7 +35,7 @@ class AuthorizationController(
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     fun register(@RequestBody user: User){
-       val response = authService.registerClient(user)
+       authService.registerClient(user)
     }
 
     @PostMapping("/signIn")
@@ -58,8 +58,8 @@ class AuthorizationController(
 
     @GetMapping("/refresh/token")
     @ResponseStatus(HttpStatus.OK)
-    fun refreshToken():TokenRs {
-        return authService.refreshToken()
+    fun refreshToken(@RequestBody user: User):TokenRs {
+        return authService.refreshToken(user)
     }
 
 }
