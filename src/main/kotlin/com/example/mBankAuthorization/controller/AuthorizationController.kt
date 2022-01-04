@@ -56,7 +56,7 @@ class AuthorizationController(
         return authService.signIn(user)
     }
 
-    @GetMapping("/refresh/token")
+    @PostMapping("/refresh/token")
     @ResponseStatus(HttpStatus.OK)
     fun refreshToken(@RequestBody user: User):TokenRs {
         return authService.refreshToken(user)
