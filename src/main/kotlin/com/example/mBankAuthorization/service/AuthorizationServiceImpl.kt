@@ -110,7 +110,6 @@ class AuthorizationServiceImpl(
             .username(user.username)
             .password(user.password)
             .build()
-
        val response = keycloakUser.tokenManager().refreshToken()
         return TokenRs(response)
     }
