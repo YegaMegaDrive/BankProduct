@@ -1,5 +1,6 @@
 package com.example.mBankAuthorization.service
 
+import com.example.commonContext.service.ContextService
 import com.example.mBankAuthorization.dto.TokenRs
 import com.example.mBankAuthorization.dto.User
 import com.example.mBankAuthorization.util.preparePasswordRepresentation
@@ -31,6 +32,8 @@ class AuthorizationServiceImpl(
         private val authURL: String,
         @Autowired
         val keycloakAdmin: Keycloak,
+/*        @Autowired
+        val contextService: ContextService<Any>*/
         /*@Qualifier("keycloakUser")
         @Autowired
         var keycloakUser: Keycloak,*/
